@@ -392,7 +392,7 @@
                                                 
                                                 <div className="flex flex-row relative">
                                                     {/* Thumbnail - Left Side with Fallback and Upload */}
-                                                    <div className={`w-24 shrink-0 relative bg-slate-800 group/thumb ${isEditing ? 'hidden' : 'block'}`}>
+                                                    <div className={`w-16 shrink-0 relative bg-slate-800 group/thumb ${isEditing ? 'hidden' : 'block'}`}>
                                                         <img 
                                                             src={ev.imageUrl || DEFAULT_IMAGE}
                                                             onError={(e) => { e.target.onerror = null; e.target.src = DEFAULT_IMAGE; }}
@@ -418,7 +418,7 @@
                                                     </div>
 
                                                     {/* Content Section */}
-                                                    <div className="flex-1 p-3 pr-10 flex flex-col justify-center min-w-0">
+                                                    <div className="flex-1 p-3 pr-14 flex flex-col justify-center min-w-0">
                                                         <div className="flex justify-between items-start gap-3">
                                                             <div className="min-w-0 flex-1">
                                                                 <div className="flex items-center gap-2 mb-1">
@@ -443,16 +443,16 @@
                                                                         <button onClick={() => setEditingId(null)} className="bg-emerald-600/20 text-emerald-500 border border-emerald-600/50 p-1 rounded hover:bg-emerald-600 hover:text-white transition-colors"><Check size={16} /></button>
                                                                     </div> 
                                                                 ) : (
-                                                                    <h3 className="font-semibold truncate flex items-center gap-2 text-slate-100">
-                                                                        <span className="opacity-90 shrink-0">{getCategoryIcon(ev.type)}</span>
-                                                                        <span className="truncate block" onClick={(e) => { e.stopPropagation(); setEditingId(ev.id); }}>
+                                                                    <h3 className="font-semibold flex items-start gap-2 text-slate-100 mt-1">
+                                                                        <span className="opacity-90 shrink-0 mt-0.5">{getCategoryIcon(ev.type)}</span>
+                                                                        <span className="block break-words leading-tight" onClick={(e) => { e.stopPropagation(); setEditingId(ev.id); }}>
                                                                             <HighlightText text={ev.title} highlight={searchQuery} />
                                                                         </span>
-                                                                        <button onClick={(e) => { e.stopPropagation(); setEditingId(ev.id); }} className="opacity-0 group-hover:opacity-50 hover:!opacity-100 text-slate-500 transition-opacity ml-1"><Edit2 size={12} /></button>
+                                                                        <button onClick={(e) => { e.stopPropagation(); setEditingId(ev.id); }} className="opacity-0 group-hover:opacity-50 hover:!opacity-100 text-slate-500 transition-opacity ml-1 shrink-0 mt-0.5"><Edit2 size={12} /></button>
                                                                     </h3>
                                                                 )}
                                                                 
-                                                                <div className="flex items-center gap-2 mt-1 min-w-0">
+                                                                <div className="flex items-center gap-2 mt-1.5 min-w-0">
                                                                     {isEditing ? (
                                                                         <div className="flex items-center gap-1 w-full" onClick={e => e.stopPropagation()}>
                                                                             <MapPin size={12} className="text-slate-500 shrink-0" />
@@ -461,7 +461,7 @@
                                                                     ) : (
                                                                         ev.location && (
                                                                             <>
-                                                                                <div className="flex items-center gap-1 min-w-0">
+                                                                                <div className="flex items-center gap-1 min-w-0 overflow-hidden">
                                                                                     <MapPin size={12} className="text-slate-400 shrink-0"/>
                                                                                     <span className="text-xs text-slate-400 truncate"><HighlightText text={ev.location} highlight={searchQuery} /></span>
                                                                                 </div>
