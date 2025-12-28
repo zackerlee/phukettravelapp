@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thailand Phuket Trip 2025</title>
+    <!-- Updated Browser Tab Title -->
+    <title>四個水手跨年團🌊 (Phuket 2025)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -23,14 +24,42 @@
 
         /* Dragging Styles */
         .is-dragging { opacity: 0.4; border: 2px dashed #3D9FBD; background: #0f172a; filter: grayscale(100%); }
-        .drag-over-target { border-top: 60px solid rgba(61, 159, 189, 0.15) !important; transition: border-top 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; }
-        .drag-over-target::before { content: "Drop Here"; position: absolute; top: -45px; left: 0; right: 0; text-align: center; color: #3D9FBD; font-size: 10px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; pointer-events: none; }
+        /* Improved Drop Target Visibility */
+        .drag-over-target { 
+            margin-top: 50px !important; /* Use margin to create space visually */
+            position: relative;
+            transition: margin-top 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .drag-over-target::before { 
+            content: "Drop Here"; 
+            position: absolute; 
+            top: -45px; 
+            left: 0; 
+            right: 0; 
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(61, 159, 189, 0.15);
+            border: 2px dashed rgba(61, 159, 189, 0.5);
+            border-radius: 12px;
+            color: #3D9FBD; 
+            font-size: 12px; 
+            font-weight: bold; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+            pointer-events: none; /* Crucial: clicks/touches pass through to the element below */
+            z-index: 0;
+        }
 
         /* Mobile Drag Polyfill Override */
         .dnd-poly-drag-image { opacity: 0.95 !important; background: #1e293b !important; border-radius: 12px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6); padding: 0; width: 300px !important; border: 2px solid #3D9FBD; transform: scale(1.05) rotate(2deg); }
         
         /* Glassmorphism utilities */
         .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        /* Touch Action Helpers */
+        .touch-none { touch-action: none; } /* Prevents scrolling on the handle */
     </style>
 </head>
 <body class="bg-slate-950 text-slate-50 h-screen overflow-hidden">
@@ -41,10 +70,17 @@
         var MobileDragDrop = MobileDragDrop || {};
         MobileDragDrop.polyfill({
             dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride,
-            holdToDrag: 150,
+            holdToDrag: 100, // Reduced slightly for better responsiveness on handle
             iterationIntervalMs: 50
         });
-        document.addEventListener("touchmove", function(e) {}, {passive: false});
+        
+        // Prevent default touch actions (scrolling) ONLY when dragging is active
+        document.addEventListener("touchmove", function(e) {
+            // Check if a drag operation is likely in progress or polyfill class is active
+            if (document.body.classList.contains("dnd-poly-drag-active")) {
+                e.preventDefault();
+            }
+        }, {passive: false});
     </script>
 
     <script type="text/babel">
@@ -80,7 +116,7 @@
         const Coins = (props) => <IconBase {...props}><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7 .71-2.82 2.82"/></IconBase>;
 
         // --- Config ---
-        const LOCAL_STORAGE_KEY = "phuket-trip-2025-data";
+        const LOCAL_STORAGE_KEY = "phuket-trip-2025-user-data-v3"; // Kept v3 to use current data
         const CHECKLIST_STORAGE_KEY = "phuket-trip-checklist-v2";
         const PRIMARY_COLOR = "#3D9FBD";
         const TRIP_START_DATE = "2025-12-30";
@@ -92,33 +128,61 @@
             { label: "01/01 (Thu)", iso: "2026-01-01" },
             { label: "01/02 (Fri)", iso: "2026-01-02" },
             { label: "01/03 (Sat)", iso: "2026-01-03" },
+            { label: "01/04 (Sun)", iso: "2026-01-04" },
         ];
 
-        // Initial Data
+        // NEW Initial Data based on User's Plan
         const INITIAL_EVENTS = [
             // Day 1: 12/30
-            { id: "e1", date: "2025-12-30", time: "17:20", title: "抵達普吉島機場 (HKT)", type: "transport", location: "Phuket International Airport", shortDescription: "通關與領行李約需 1 小時，跨年人潮眾多。", imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=400&q=80" },
-            { id: "e2", date: "2025-12-30", time: "18:30", title: "取車出發 (Drive Thailand)", type: "transport", location: "Airport Car Rental", shortDescription: "心理準備：進巴東車程約 2 小時 (嚴重塞車)。", imageUrl: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=400&q=80" },
-            { id: "e3", date: "2025-12-30", time: "20:00", title: "Check-in: Fusion Suites", type: "stay", location: "Fusion Suites Phuket Patong", shortDescription: "巴東區飯店，位置方便，有泳池。", imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80" },
-            { id: "e4", date: "2025-12-30", time: "20:30", title: "晚餐：泰式料理", type: "food", location: "No.6 Restaurant / Kaab Gluay", shortDescription: "推薦 No.6 on the Hill (風景好) 或 Kaab Gluay (在地)，避開總店排隊。", imageUrl: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=400&q=80" },
-            { id: "e5", date: "2025-12-30", time: "22:00", title: "Bangla Road 散步", type: "activity", location: "Bangla Road", shortDescription: "感受酒吧街氣氛，7-11 採買補給。", imageUrl: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=400&q=80" },
+            { id: "e1", date: "2025-12-30", time: "12:00", title: "桃園機場集合 (TPE)", type: "transport", location: "Taoyuan Airport", shortDescription: "準備出發！虎航 IT 503。", imageUrl: "https://images.unsplash.com/photo-1542296332-2e44a99cfef0?auto=format&fit=crop&w=400&q=80" },
+            { id: "e2", date: "2025-12-30", time: "14:00", title: "✈️ 飛機起飛 IT 503", type: "transport", location: "TPE -> HKT", shortDescription: "飛行時間約 4.5 小時。", imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=400&q=80" },
+            { id: "e3", date: "2025-12-30", time: "17:20", title: "抵達普吉島機場", type: "transport", location: "Phuket International Airport", shortDescription: "通關入境。", imageUrl: "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e4", date: "2025-12-30", time: "18:00", title: "租車取車 (Drive Thailand)", type: "transport", location: "Airport Car Rental", shortDescription: "檢查車況、拍照存證。", imageUrl: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e5", date: "2025-12-30", time: "19:00", title: "Check-in: Fusion Suites", type: "stay", location: "Fusion Suites Phuket Patong", shortDescription: "飯店A (Booking by 水水)。下行李。", imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80" },
+            { id: "e6", date: "2025-12-30", time: "20:00", title: "晚餐：六號餐廳 (No.6 Up The Hill)", type: "food", location: "No.6 Restaurant Up The Hill", shortDescription: "知名泰式熱炒。若總店太多人可去山上分店。", imageUrl: "https://images.unsplash.com/photo-1559314809-0d155014e29e?auto=format&fit=crop&w=400&q=80", mapLink: "https://www.google.com/maps/place/No.6+Restaurant+Up+The+Hill/@7.9084315,98.3026681,17z/data=!3m1!4b1!4m6!3m5!1s0x30503b895aa9cead:0x429ddda6a910ac90!8m2!3d7.9084315!4d98.3072815!16s%2Fg%2F11kprrylg0?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D" },
+            { id: "e7", date: "2025-12-30", time: "21:00", title: "Bangla 夜市 / 海灘散步", type: "activity", location: "Bangla Road", shortDescription: "感受普吉島夜生活。", imageUrl: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?auto=format&fit=crop&w=400&q=80" },
+
             // Day 2: 12/31
-            { id: "e6", date: "2025-12-31", time: "08:00", title: "大象保護區 (Morning Visit)", type: "activity", location: "Elephant Jungle Sanctuary", shortDescription: "體驗餵食與泥漿浴，避開下午酷熱。", imageUrl: "https://images.unsplash.com/photo-1585970480901-90d63348d801?auto=format&fit=crop&w=400&q=80" },
-            { id: "e7", date: "2025-12-31", time: "14:00", title: "網美咖啡廳", type: "food", location: "Three Monkeys Restaurant", shortDescription: "Three Monkeys (叢林風) 或 The Feelsion (復古風)。", imageUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=400&q=80" },
-            { id: "e8", date: "2025-12-31", time: "16:30", title: "⚠️ 關鍵：回飯店停車", type: "warning", location: "Fusion Suites Parking", shortDescription: "18:00 後封路！務必在 17:00 前把車停好，之後全步行。", imageUrl: "https://images.unsplash.com/photo-1625902364860-705307372d3f?auto=format&fit=crop&w=400&q=80" },
-            { id: "e9", date: "2025-12-31", time: "23:50", title: "跨年煙火秀 🎆", type: "party", location: "Patong Beach", shortDescription: "帶著啤酒在沙灘倒數，欣賞煙火。", imageUrl: "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?auto=format&fit=crop&w=400&q=80" },
+            { id: "e8", date: "2025-12-31", time: "08:30", title: "飯店早餐", type: "food", location: "Fusion Suites", shortDescription: "", imageUrl: "https://images.unsplash.com/photo-1533001217742-1e9680c2e64d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e9", date: "2025-12-31", time: "10:30", title: "飯店泳池玩水", type: "activity", location: "Hotel Pool", shortDescription: "游游游。", imageUrl: "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=400&q=80" },
+            { id: "e10", date: "2025-12-31", time: "11:00", title: "大象保護區", type: "activity", location: "Elephant Sanctuary", shortDescription: "與大象互動。", imageUrl: "https://images.unsplash.com/photo-1585970480901-90d63348d801?auto=format&fit=crop&w=400&q=80" },
+            { id: "e11", date: "2025-12-31", time: "13:00", title: "午餐: Sugar and Spice", type: "food", location: "Sugar and Spice Restaurant", shortDescription: "泰式/西式料理。", imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+            { id: "e12", date: "2025-12-31", time: "15:00", title: "山坡網美咖啡", type: "food", location: "Phuket Hillside Cafe", shortDescription: "⚠️ 注意：跨年夜巴東可能提早封路，建議提早回程。", imageUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=400&q=80" },
+            { id: "e13", date: "2025-12-31", time: "16:00", title: "海邊網美咖啡", type: "food", location: "Seaside Cafe", shortDescription: "看海景。", imageUrl: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=400&q=80" },
+            { id: "e14", date: "2025-12-31", time: "18:00", title: "普吉島最高觀景點", type: "activity", location: "Karon Viewpoint", shortDescription: "欣賞夕陽。⚠️ 趕快回巴東停車！", imageUrl: "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=400&q=80" },
+            { id: "e15", date: "2025-12-31", time: "19:00", title: "回飯店梳洗", type: "stay", location: "Fusion Suites", shortDescription: "準備跨年。", imageUrl: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=400&q=80" },
+            { id: "e16", date: "2025-12-31", time: "20:00", title: "巴東街晚餐、喝酒", type: "party", location: "Patong Street", shortDescription: "跨年氣氛。", imageUrl: "https://images.unsplash.com/photo-1574345568972-e5658d533b8a?auto=format&fit=crop&w=400&q=80" },
+            { id: "e17", date: "2025-12-31", time: "23:00", title: "跨年煙火秀 🎆", type: "party", location: "Patong Beach", shortDescription: "Happy New Year!", imageUrl: "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?auto=format&fit=crop&w=400&q=80" },
+
             // Day 3: 01/01
-            { id: "e10", date: "2026-01-01", time: "10:00", title: "包船去 Freedom Beach", type: "activity", location: "Freedom Beach", shortDescription: "不要走山路！從 Patong 包長尾船來回，帥氣又輕鬆。", imageUrl: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?auto=format&fit=crop&w=400&q=80" },
-            { id: "e11", date: "2026-01-01", time: "15:30", title: "Check-in: Seabed Grand", type: "stay", location: "Seabed Grand Hotel Phuket", shortDescription: "移動到普吉鎮周邊，準備逛夜市與跳島。", imageUrl: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=400&q=80" },
-            { id: "e12", date: "2026-01-01", time: "16:30", title: "普吉舊城區 & 法式吐司", type: "activity", location: "Old Town Phuket", shortDescription: "Phuketique 抽號碼牌，逛 Old Town 建築。", imageUrl: "https://images.unsplash.com/photo-1605707733671-59727409249e?auto=format&fit=crop&w=400&q=80" },
-            { id: "e13", date: "2026-01-01", time: "19:00", title: "晚餐：米其林推薦", type: "food", location: "Tu Kab Khao", shortDescription: "Tu Kab Khao 或 One Chun，道地泰南菜。", imageUrl: "https://images.unsplash.com/photo-1563897539633-7374c278c224?auto=format&fit=crop&w=400&q=80" },
+            { id: "e18", date: "2026-01-01", time: "08:00", title: "飯店早餐", type: "food", location: "Fusion Suites", shortDescription: "", imageUrl: "https://images.unsplash.com/photo-1493770348161-369560ae357d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e19", date: "2026-01-01", time: "09:00", title: "Freedom Beach", type: "activity", location: "Freedom Beach", shortDescription: "搭船或爬山路去。", imageUrl: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?auto=format&fit=crop&w=400&q=80" },
+            { id: "e20", date: "2026-01-01", time: "10:00", title: "Tri Trang Beach", type: "activity", location: "Tri Trang Beach", shortDescription: "", imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80" },
+            { id: "e21", date: "2026-01-01", time: "11:00", title: "神級雞肉飯", type: "food", location: "Briley Chicken Rice", shortDescription: "必吃海南雞飯。", imageUrl: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80" },
+            { id: "e22", date: "2026-01-01", time: "12:00", title: "Check-in: Seabed Grand", type: "stay", location: "Seabed Grand Hotel Phuket", shortDescription: "換飯店 (Booking by hoho)。移動到普吉鎮方向。", imageUrl: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=400&q=80" },
+            { id: "e23", date: "2026-01-01", time: "13:00", title: "Hanuman World 森林溜索", type: "activity", location: "Hanuman World", shortDescription: "刺激叢林飛躍。", imageUrl: "https://images.unsplash.com/photo-1596395819057-d377484a0d9a?auto=format&fit=crop&w=400&q=80" },
+            { id: "e24", date: "2026-01-01", time: "14:00", title: "普吉鎮老街", type: "activity", location: "Old Town Phuket", shortDescription: "中葡式建築拍照。", imageUrl: "https://images.unsplash.com/photo-1605707733671-59727409249e?auto=format&fit=crop&w=400&q=80" },
+            { id: "e25", date: "2026-01-01", time: "15:00", title: "Phuketique 法式吐司", type: "food", location: "Phuketique", shortDescription: "爆幹好吃但要排隊。", imageUrl: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=400&q=80" },
+            { id: "e26", date: "2026-01-01", time: "18:00", title: "必比登: One Chun Cafe", type: "food", location: "One Chun Cafe", shortDescription: "米其林推薦泰南菜。", imageUrl: "https://images.unsplash.com/photo-1563897539633-7374c278c224?auto=format&fit=crop&w=400&q=80" },
+            { id: "e27", date: "2026-01-01", time: "20:00", title: "G Market 夜市市集", type: "food", location: "G Market", shortDescription: "Phuket Grocery 旁的新夜市。", imageUrl: "https://images.unsplash.com/photo-1534438097545-a2c22c57f271?auto=format&fit=crop&w=400&q=80" },
+
             // Day 4: 01/02
-            { id: "e14", date: "2026-01-02", time: "09:00", title: "皮皮島一日遊 (Phi Phi)", type: "activity", location: "Phi Phi Islands", shortDescription: "Maya Bay, Pileh Lagoon 跳水。記得吃暈船藥。", imageUrl: "https://images.unsplash.com/photo-1537956965359-35780d64d509?auto=format&fit=crop&w=400&q=80" },
-            { id: "e15", date: "2026-01-02", time: "19:30", title: "Chillva Market (青蛙夜市)", type: "food", location: "Chillva Market", shortDescription: "週五最熱鬧，吃海鮮桶、買衣服。", imageUrl: "https://images.unsplash.com/photo-1534438097545-a2c22c57f271?auto=format&fit=crop&w=400&q=80" },
+            { id: "e28", date: "2026-01-02", time: "09:00", title: "跳島：皮皮島一日遊", type: "activity", location: "Boat Ramp Pier", shortDescription: "12/24前需預約 (玄丸下訂)。", imageUrl: "https://images.unsplash.com/photo-1537956965359-35780d64d509?auto=format&fit=crop&w=400&q=80" },
+            { id: "e29", date: "2026-01-02", time: "12:00", title: "跳島午餐", type: "food", location: "Phi Phi Island", shortDescription: "行程包含。", imageUrl: "https://images.unsplash.com/photo-1559304822-9eb2813c9844?auto=format&fit=crop&w=400&q=80" },
+            { id: "e30", date: "2026-01-02", time: "17:00", title: "回到本島碼頭", type: "transport", location: "Pier", shortDescription: "返回飯店梳洗。", imageUrl: "https://images.unsplash.com/photo-1581452417769-653a0670c538?auto=format&fit=crop&w=400&q=80" },
+            { id: "e31", date: "2026-01-02", time: "18:00", title: "Chillva Market (青蛙夜市)", type: "food", location: "Chillva Market", shortDescription: "文青夜市，氣氛好。", imageUrl: "https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&w=400&q=80" },
+            { id: "e32", date: "2026-01-02", time: "20:00", title: "Big C 採買", type: "activity", location: "Big C Supercenter", shortDescription: "買伴手禮。", imageUrl: "https://images.unsplash.com/photo-1580913428739-c2ae9b039556?auto=format&fit=crop&w=400&q=80" },
+
             // Day 5: 01/03
-            { id: "e16", date: "2026-01-03", time: "13:30", title: "Ma Doo Bua 荷葉咖啡", type: "food", location: "Ma Doo Bua", shortDescription: "網美必拍，位於北部往機場順路。", imageUrl: "https://images.unsplash.com/photo-1528163939626-d5d1c5d00fc6?auto=format&fit=crop&w=400&q=80" },
-            { id: "e17", date: "2026-01-03", time: "16:00", title: "⚠️ 出發去機場", type: "warning", location: "En route to Airport", shortDescription: "絕對要提早！預留還車與塞車時間。", imageUrl: "https://images.unsplash.com/photo-1570710891163-6d3b5c47248b?auto=format&fit=crop&w=400&q=80" },
-            { id: "e18", date: "2026-01-03", time: "17:30", title: "抵達機場還車", type: "transport", location: "Phuket Airport", shortDescription: "辦理還車、退稅、Check-in。", imageUrl: "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e33", date: "2026-01-03", time: "10:00", title: "飯店爽廢", type: "stay", location: "Seabed Grand", shortDescription: "最後享受飯店設施。", imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80" },
+            { id: "e34", date: "2026-01-03", time: "11:00", title: "海灘躺著", type: "activity", location: "Beach", shortDescription: "最後的海灘時光。", imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80" },
+            { id: "e35", date: "2026-01-03", time: "16:00", title: "Ma Doo Bua 蓮花池咖啡", type: "food", location: "Ma Doo Bua", shortDescription: "網美必拍，離機場近。", imageUrl: "https://images.unsplash.com/photo-1528163939626-d5d1c5d00fc6?auto=format&fit=crop&w=400&q=80" },
+            { id: "e36", date: "2026-01-03", time: "18:00", title: "還車", type: "transport", location: "Airport Car Rental", shortDescription: "預留時間檢查。", imageUrl: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e37", date: "2026-01-03", time: "19:00", title: "普吉島機場 Check-in", type: "transport", location: "Phuket Airport", shortDescription: "⚠️ 建議提早。人多。", imageUrl: "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&w=400&q=80" },
+            { id: "e38", date: "2026-01-03", time: "20:45", title: "✈️ 飛機起飛 IT 504", type: "transport", location: "HKT -> TPE", shortDescription: "Bye Phuket!", imageUrl: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=400&q=80" },
+            
+            // Day 6: 01/04
+            { id: "e39", date: "2026-01-04", time: "01:35", title: "抵達桃園機場", type: "transport", location: "TPE", shortDescription: "甜蜜的家。", imageUrl: "https://images.unsplash.com/photo-1542296332-2e44a99cfef0?auto=format&fit=crop&w=400&q=80" },
         ];
 
         // --- Highlight Text ---
@@ -400,7 +464,11 @@
             const handleDeleteEvent = (id) => { if(confirm("Delete this event?")) setEvents(prev => prev.filter(ev => ev.id !== id)); };
             const handleUpdateField = (id, field, value) => { setEvents(prev => prev.map(ev => ev.id === id ? { ...ev, [field]: value } : ev)); };
 
-            const handleOpenMap = (location, title) => {
+            const handleOpenMap = (location, title, mapLink) => {
+                if (mapLink) {
+                    window.open(mapLink, '_blank');
+                    return;
+                }
                 const query = encodeURIComponent(`${location} ${title || ''}`);
                 window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
             };
@@ -533,7 +601,7 @@
                     <header className="shrink-0 bg-slate-950/80 backdrop-blur border-b border-slate-800 p-4 pb-0 z-20 transition-all sticky top-0">
                         <div className="flex justify-between items-center mb-3">
                             <div>
-                                <div className="text-[10px] tracking-widest text-slate-400 font-bold uppercase">Water Boys Trip 2025</div>
+                                <div className="text-[10px] tracking-widest text-slate-400 font-bold uppercase">四個水手跨年團🌊</div>
                                 <h1 className="text-lg font-bold">Thailand <span style={{color:PRIMARY_COLOR}}>Phuket Trip</span></h1>
                             </div>
                             <div className="text-right flex flex-col items-end">
@@ -612,7 +680,7 @@
                                                 onDragEnd={handleDragEnd}
                                                 onDrop={(e) => handleDrop(e, ev.id)}
                                             >
-                                                <div className={`w-12 bg-slate-900 border-r border-slate-800 flex items-center justify-center shrink-0 rounded-l-xl ${searchQuery ? "opacity-30 cursor-not-allowed" : "cursor-grab active:cursor-grabbing group-hover:bg-slate-800 transition-colors"}`}>
+                                                <div className={`w-12 bg-slate-900 border-r border-slate-800 flex items-center justify-center shrink-0 rounded-l-xl touch-none ${searchQuery ? "opacity-30 cursor-not-allowed" : "cursor-grab active:cursor-grabbing group-hover:bg-slate-800 transition-colors"}`}>
                                                     <GripVertical size={20} className="text-slate-500 group-hover:text-slate-300 transition-colors" />
                                                 </div>
 
@@ -692,7 +760,7 @@
                                                                                         <MapPin size={12} className="text-slate-400 shrink-0"/>
                                                                                         <span className="text-xs text-slate-400 truncate"><HighlightText text={ev.location} highlight={searchQuery} /></span>
                                                                                     </div>
-                                                                                    <button onClick={(e) => { e.stopPropagation(); handleOpenMap(ev.location, ev.title); }} className="text-blue-400 hover:text-blue-300 p-1 shrink-0 active:scale-95 transition-transform ml-1" title="Navigate with Google Maps"><MapIcon size={14} /></button>
+                                                                                    <button onClick={(e) => { e.stopPropagation(); handleOpenMap(ev.location, ev.title, ev.mapLink); }} className="text-blue-400 hover:text-blue-300 p-1 shrink-0 active:scale-95 transition-transform ml-1" title="Navigate with Google Maps"><MapIcon size={14} /></button>
                                                                                 </>
                                                                             )
                                                                         )}
